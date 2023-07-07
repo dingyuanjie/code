@@ -1,4 +1,6 @@
+
 <script setup lang="ts">
+// @ts-nocheck
 import { reactive, watch,ref } from 'vue';
 import axios from 'axios';
 import { ElMessage } from 'element-plus'
