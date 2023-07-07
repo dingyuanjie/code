@@ -1,6 +1,20 @@
 <script setup lang="ts">
-import { reactive, watch } from 'vue';
+import { reactive, watch,ref } from 'vue';
 import axios from 'axios';
+import { ElMessage } from 'element-plus'
+import yf  from './yf.png'
+import xz  from './xz.png'
+import wq  from './wq.png'
+import fl  from './fl.png'
+import ls  from './ls.png'
+import ly  from './ly.png'
+import ss  from './ss.png'
+import sx  from './sx.png'
+import tj  from './tj.png'
+import wh  from './wh.png'
+import xx  from './xx.png'
+import zq  from './zq.png'
+const dialogFormVisible = ref(false)
 const data= reactive({
   sx:{//面板加点相性等级门派
     dj:142,
@@ -77,7 +91,7 @@ const data= reactive({
   },
   fb:{
     fbxx:1,
-    fsStatus:false//角色是否飞升
+    fsStatus:2//角色是否飞升
   },
   zq:{//坐骑属性
     ws:0,
@@ -86,7 +100,7 @@ const data= reactive({
   },
   zbsx:{//装备属性
     wqsh:13818,
-    wqfs:5504,
+    wqfs:5540,
     tgfy:2557,
     tgqx:2653,
     tgfl:1398,
@@ -175,6 +189,16 @@ const jsjg = reactive({
             value: 5,
             label: '法力',
           },
+    ],
+    optionsxm:[
+      {
+        value: 1,
+        label: '未飞升仙魔',
+      },
+      {
+        value: 2,
+        label: '已飞升仙魔',
+      },
     ]
   },
   jssx:{//计算结果
@@ -199,28 +223,11 @@ const jsjgFun = ()=>{
       jsjg.jssx.zdflz = Number(jsjg.jssxApi.zdflz) + Number(data.hq.fl)+ Number(data.zbsx.tgfl)+ Number(data.zbsx.yffl);
       jsjg.jssx.ws = Number(jsjg.jssxApi.ws) + Number(data.ls.ws) + Number(data.fl.ws)+ Number(data.wh.ws)+ Number(data.hq.ws)+ Number(data.zq.ws) + Number(data.zbsx.wqsh) + Number(data.ly.ws) + Number(data.tj.ws) + Number(data.ss.sh1)  + Number(data.ss.sh2);
       jsjg.jssx.fs = Number(jsjg.jssxApi.fs) + Number(data.ls.fs) + Number(data.fl.fs)+ Number(data.wh.fs)+ Number(data.hq.fs) + Number(data.zq.fs) + Number(data.zbsx.wqsh)- Number(data.zbsx.wqfs*0.25) + Number(data.ly.fs)+ Number(data.tj.fs)+ Number(data.ss.sh1)  + Number(data.ss.sh2);
-      jsjg.jssx.sd = Number(jsjg.jssxApi.sd) + Number(data.ls.sd) + Number(data.fl.sd)+ Number(data.wh.sd)+ Number(data.hq.sd)+ Number(data.zbsx.xzsd)
+      jsjg.jssx.sd = Number(jsjg.jssxApi.sd) + Number(data.ls.sd) + Number(data.fl.sd)+ Number(data.wh.sd)+ Number(data.hq.sd)+ Number(data.zbsx.xzsd); //* (1+ data.fl.sdbsb/100)
       jsjg.jssx.fy = Number(jsjg.jssxApi.fy) + Number(data.ls.fy) + Number(data.fl.fy)+ Number(data.wh.fy)+ Number(data.hq.fy)+ Number(data.zq.fy) + Number(data.zbsx.tgfy) + Number(data.zbsx.yffy) + Number(data.zbsx.xzfy) + Number(data.ly.fy);
-      for(let i=0;i<data.gm.length;i++){
-        if(data.gm[i].gmop == 1){
-          jsjg.jssx.ws = Number(jsjg.jssx.ws) + Number(data.gm[i].value)
-          jsjg.jssx.fs = Number(jsjg.jssx.fs) + Number(data.gm[i].value)
-        } else if(data.gm[i].gmop == 2){
-          jsjg.jssx.sd = Number(jsjg.jssx.sd) + Number(data.gm[i].value)
-        } else if(data.gm[i].gmop == 3){
-          jsjg.jssx.fy = Number(jsjg.jssx.fy) + Number(data.gm[i].value)
-        } else if(data.gm[i].gmop == 4){
-          jsjg.jssx.zdqxz = Number(jsjg.jssx.zdqxz) + Number(data.gm[i].value)
-        } else if(data.gm[i].gmop == 5){
-          jsjg.jssx.zdflz = Number(jsjg.jssx.zdflz) + Number(data.gm[i].value)
-        }   
-      }
-      console.log(jsjg.jssx.fs,'jsjg.jssx.fs')
-              // 套装
       switch (data.atz.tzxx) {
-        case 1:
+          case 1:
           jsjg.jssx.fs = Number(jsjg.jssx.fs) + Number(data.atz.jt.fs1)  + Number(data.atz.jt.fs2) + Number(data.atz.jt.fs3) + Number(data.atz.jt.fs4) 
-          console.log(jsjg.jssx.fs,'jsjg.jssx.fs')
           break;
           case 2:
           jsjg.jssx.zdqxz = Number(jsjg.jssx.zdqxz) + Number(data.atz.mt.qx1)  + Number(data.atz.mt.qx2) + Number(data.atz.mt.qx3) + Number(data.atz.mt.qx4)  
@@ -236,28 +243,64 @@ const jsjgFun = ()=>{
           break;
         default:
           break;
+      }      
+      for(let i=0;i<data.gm.length;i++){
+        if(data.gm[i].gmop == 1){
+          jsjg.jssx.ws = Number(jsjg.jssx.ws) + Number(data.gm[i].value)
+          jsjg.jssx.fs = Number(jsjg.jssx.fs) + Number(data.gm[i].value)
+        } else if(data.gm[i].gmop == 2){
+          jsjg.jssx.sd = Number(jsjg.jssx.sd) + Number(data.gm[i].value)
+        } else if(data.gm[i].gmop == 3){
+          jsjg.jssx.fy = Number(jsjg.jssx.fy) + Number(data.gm[i].value)
+        } else if(data.gm[i].gmop == 4){
+          jsjg.jssx.zdqxz = Number(jsjg.jssx.zdqxz) + Number(data.gm[i].value)
+        } else if(data.gm[i].gmop == 5){
+          jsjg.jssx.zdflz = Number(jsjg.jssx.zdflz) + Number(data.gm[i].value)
+        }   
       }
+        jsjg.jssx.sd = Number(Number((jsjg.jssx.sd ) * (1+data.fl.sdbsb/100)).toFixed(2)) 
+        // 法宝加成
         switch (data.fb.fbxx) {
         case 1:
-          // jsjg.jssx.fs = (jsjg.jssx.fs) * (100+ 3)/100 
+          jsjg.jssx.fs = Number(Number((jsjg.jssx.fs) * (1 + 1.5*data.fb.fsStatus/100)).toFixed(2)) 
           break;
           case 2:
-          jsjg.jssx.zdqxz = (jsjg.jssx.zdqxz) * (100+ 5)/100   
-          jsjg.jssx.zdflz = (jsjg.jssx.zdflz) * (100+ 5)/100   
+          jsjg.jssx.zdqxz = Number(Number((jsjg.jssx.zdqxz) * (1+ 2.5*data.fb.fsStatus/100)).toFixed(2))   
+          jsjg.jssx.zdflz = Number(Number((jsjg.jssx.zdflz) * (1+ 2.5*data.fb.fsStatus/100)).toFixed(2))  
           break;
           case 3://水套
-          jsjg.jssx.fy = (jsjg.jssx.fy) * (100+ 6)/100
+          jsjg.jssx.fy = Number(Number((jsjg.jssx.fy) * (1+ 3*data.fb.fsStatus/100)).toFixed(2)) 
           break;
           case 4://火套
-          jsjg.jssx.sd = (jsjg.jssx.sd ) * (100+ 3 + data.fl.sdbsb)/100
+          jsjg.jssx.sd = Number(Number((jsjg.jssx.sd ) * (1+1.5*data.fb.fsStatus/100)).toFixed(2)) 
           break;
           case 5:
-          jsjg.jssx.ws = (jsjg.jssx.ws) * (100+ 3)/100
+          jsjg.jssx.ws = Number(Number((jsjg.jssx.ws ) * (1+1.5*data.fb.fsStatus/100)).toFixed(2))
           break;
         default:
           break;
       }
-      jsjg.jssx.sd = jsjg.jssx.sd * (100+ data.fl.sdbsb)/100
+}
+const srcList = reactive([
+    wq,xz,yf,fl,ls,ly,ss,sx,tj,wh,xx,zq
+])
+const url = ref(wq)
+const handleCopy = ()=>{
+	let url = 'dingyuanjie2023'
+	let copyInput = document.createElement('input');//创建input元素
+	document.body.appendChild(copyInput);//向页面底部追加输入框
+	copyInput.setAttribute('value', url);//添加属性，将url赋值给input元素的value属性
+	copyInput.select();//选择input元素
+	document.execCommand("Copy");//执行复制命令
+  ElMessage({
+    message: '复制成功，快点添加作者微信吧',
+    type: 'success',
+  })
+	//复制之后再删除元素，否则无法成功赋值
+	copyInput.remove();//删除动态创建的节点
+}
+const showModal =()=>{
+  dialogFormVisible.value = true
 }
 watch(
   data.sx,
@@ -403,6 +446,13 @@ watch(
   },
   { immediate: true,deep:true }
 );
+watch(
+  data.fb,
+  (newValue, oldValue) => {
+    jsjgFun()
+  },
+  { immediate: true,deep:true }
+);
 </script>
 
 <template>
@@ -412,7 +462,9 @@ watch(
 					<div class="erro"><span class="" id="errorMsg"></span> </div>
 					<div class="mnq-t">
 						<label for="dengji">等级：</label>
-            <el-input class="inputw" v-model="data.sx.dj" placeholder="请输入等级："></el-input>
+            <el-input type="number" class="inputw" v-model="data.sx.dj" ></el-input>
+            <div @click="handleCopy" class="cur">作者微信：dingyuanjie2023 <el-text class="mx-1" type="success">点击复制</el-text></div>
+            <div @click="showModal" class="cur"><el-text class="mx-1" type="primary">使用小说明，不太会用点我</el-text></div>
            </div>
            <div class="flexBox">
 						<div class="calculator">
@@ -420,19 +472,19 @@ watch(
 							<ul>
 								<li>
 									<label>体质：</label>
-									<el-input class="inputw" v-model="data.sx.tz" placeholder="请输入等级："></el-input>
+									<el-input type="number" class="inputw" v-model="data.sx.tz" ></el-input>
                 </li>
 								<li>
 									<label>灵力：</label>
-                  <el-input class="inputw" v-model="data.sx.ll" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.sx.ll" ></el-input>
                 </li>
 								<li>
 									<label>力量：</label>
-                  <el-input class="inputw" v-model="data.sx.ll2" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.sx.ll2" ></el-input>
                 </li>
 								<li>
 									<label>敏捷：</label>
-                  <el-input class="inputw" v-model="data.sx.mj" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.sx.mj" ></el-input>
                 </li>
 							</ul>
 						</div>
@@ -441,23 +493,23 @@ watch(
 							<ul>
 								<li>
 									<label>金相：</label>
-                  <el-input class="inputw" v-model="data.sx.jxxz" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.sx.jxxz" ></el-input>
                 </li>
 								<li>
 									<label>木相：</label>     
-                  <el-input class="inputw" v-model="data.sx.mxxz" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.sx.mxxz" ></el-input>
 								</li>
 								<li>
 									<label>水相：</label>
-                  <el-input class="inputw" v-model="data.sx.sxxz" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.sx.sxxz" ></el-input>
 								</li>
 								<li>
 									<label>火相：</label>
-                  <el-input class="inputw" v-model="data.sx.hxxz" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.sx.hxxz" ></el-input>
 								</li>
 								<li>
 									<label>土相：</label>
-                  <el-input class="inputw" v-model="data.sx.txxz" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.sx.txxz" ></el-input>
 								</li>
 							</ul>
 						</div>
@@ -467,19 +519,19 @@ watch(
 							<ul>
 								<li>
 									<label>物伤：</label>
-									<el-input class="inputw" v-model="data.ls.ws" placeholder="请输入等级："></el-input>
+									<el-input type="number" class="inputw" v-model="data.ls.ws" ></el-input>
                 </li>
 								<li>
 									<label>防御：</label>
-                  <el-input class="inputw" v-model="data.ls.fy" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.ls.fy" ></el-input>
                 </li>
 								<li>
 									<label>法伤：</label>
-                  <el-input class="inputw" v-model="data.ls.fs" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.ls.fs" ></el-input>
                 </li>
 								<li>
 									<label>速度：</label>
-                  <el-input class="inputw" v-model="data.ls.sd" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.ls.sd" ></el-input>
                 </li>
 							</ul>
 						</div>
@@ -488,23 +540,23 @@ watch(
 							<ul>
 								<li>
 									<label>物伤：</label>
-                  <el-input class="inputw" v-model="data.fl.ws" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.fl.ws" ></el-input>
                 </li>
 								<li>
 									<label>法伤：</label>     
-                  <el-input class="inputw" v-model="data.fl.fs" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.fl.fs" ></el-input>
 								</li>
 								<li>
 									<label>速度：</label>
-                  <el-input class="inputw" v-model="data.fl.sd" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.fl.sd" ></el-input>
 								</li>
 								<li>
 									<label>防御：</label>
-                  <el-input class="inputw" v-model="data.fl.fy" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.fl.fy" ></el-input>
 								</li>
                 <li>
 									<label>速度加成：</label>
-                  <el-input class="inputw" v-model="data.fl.sdbsb" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.fl.sdbsb" ></el-input>
 								</li>
 							</ul>
 						</div>
@@ -514,19 +566,19 @@ watch(
 							<ul>
 								<li>
 									<label>物伤：</label>
-									<el-input class="inputw" v-model="data.wh.ws" placeholder="请输入等级："></el-input>
+									<el-input type="number" class="inputw" v-model="data.wh.ws" ></el-input>
                 </li>
 								<li>
 									<label>法伤：</label>
-                  <el-input class="inputw" v-model="data.wh.fs" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.wh.fs" ></el-input>
                 </li>
 								<li>
 									<label>防御：</label>
-                  <el-input class="inputw" v-model="data.wh.fy" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.wh.fy" ></el-input>
                 </li>
 								<li>
 									<label>速度：</label>
-                  <el-input class="inputw" v-model="data.wh.sd" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.wh.sd" ></el-input>
                 </li>
 							</ul>
 						</div>
@@ -535,19 +587,19 @@ watch(
 							<ul>
 								<li>
 									<label>物伤：</label>
-									<el-input class="inputw" v-model="data.ly.ws" placeholder="请输入等级："></el-input>
+									<el-input type="number" class="inputw" v-model="data.ly.ws" ></el-input>
                 </li>
 								<li>
 									<label>法伤：</label>
-                  <el-input class="inputw" v-model="data.ly.fs" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.ly.fs" ></el-input>
                 </li>
 								<li>
 									<label>气血：</label>
-                  <el-input class="inputw" v-model="data.ly.qx" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.ly.qx" ></el-input>
                 </li>
 								<li>
 									<label>防御：</label>
-                  <el-input class="inputw" v-model="data.ly.fy" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.ly.fy" ></el-input>
                 </li>
 							</ul>
 						</div>
@@ -556,23 +608,23 @@ watch(
 							<ul>
 								<li>
 									<label>物伤：</label>
-									<el-input class="inputw" v-model="data.tj.ws" placeholder="请输入等级："></el-input>
+									<el-input type="number" class="inputw" v-model="data.tj.ws" ></el-input>
                 </li>
 								<li>
 									<label>法伤：</label>
-                  <el-input class="inputw" v-model="data.tj.fs" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.tj.fs" ></el-input>
                 </li>
 								<li>
 									<label>气血：</label>
-                  <el-input class="inputw" v-model="data.tj.qx" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.tj.qx" ></el-input>
                 </li>
                 <li>
-									<label>首饰伤害1：</label>
-									<el-input class="inputw" v-model="data.ss.sh1" placeholder="请输入等级："></el-input>
+									<label>手镯伤害1：</label>
+									<el-input type="number" class="inputw" v-model="data.ss.sh1" ></el-input>
                 </li>
 								<li>
-									<label>首饰伤害2：</label>
-                  <el-input class="inputw" v-model="data.ss.sh2" placeholder="请输入等级："></el-input>
+									<label>手镯伤害2：</label>
+                  <el-input type="number" class="inputw" v-model="data.ss.sh2" ></el-input>
                 </li>
 							</ul>
 						</div>
@@ -580,8 +632,6 @@ watch(
 							<h4>装备共鸣</h4>
 							<ul >
 								<li v-for="(item,index) in data.gm" :key="index">
-									<label>属性{{ index + 1 }}：</label>
-                  <!-- optionsgm -->
                   <el-select v-model="item.gmop" placeholder="请选择" class="inputw">
                     <el-option
                       v-for="item in jsjg.data.optionsgm"
@@ -591,7 +641,7 @@ watch(
                     >
                     </el-option>
                   </el-select>
-									<el-input class="inputw" v-model="item.value" placeholder="请输入等级："></el-input>
+									<el-input type="number" class="inputw" style="padding-left: 5px;" v-model="item.value" ></el-input>
                 </li>
 							</ul>
 						</div>            
@@ -600,27 +650,27 @@ watch(
 							<ul>
 								<li>
 									<label>速度：</label>
-                  <el-input class="inputw" v-model="data.hq.sd" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.hq.sd" ></el-input>
                 </li>
 								<li>
 									<label>物伤：</label>     
-                  <el-input class="inputw" v-model="data.hq.ws" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.hq.ws" ></el-input>
 								</li>
 								<li>
 									<label>法伤：</label>
-                  <el-input class="inputw" v-model="data.hq.fs" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.hq.fs" ></el-input>
 								</li>
 								<li>
 									<label>防御：</label>
-                  <el-input class="inputw" v-model="data.hq.fy" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.hq.fy" ></el-input>
 								</li>
 								<li>
 									<label>气血：</label>
-                  <el-input class="inputw" v-model="data.hq.qx" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.hq.qx" ></el-input>
 								</li>
                 <li>
 									<label>法力：</label>
-                  <el-input class="inputw" v-model="data.hq.fl" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.hq.fl" ></el-input>
 								</li>
 							</ul>
 						</div>
@@ -631,19 +681,19 @@ watch(
 							<ul>
 								<li>
 									<label>物伤：</label>
-									<el-input class="inputw" v-model="data.zq.ws" placeholder="请输入等级："></el-input>
+									<el-input type="number" class="inputw" v-model="data.zq.ws" ></el-input>
                 </li>
 								<li>
 									<label>法伤：</label>
-                  <el-input class="inputw" v-model="data.zq.fs" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.zq.fs" ></el-input>
                 </li>
 								<li>
 									<label>防御：</label>
-                  <el-input class="inputw" v-model="data.zq.fy" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.zq.fy" ></el-input>
                 </li>
 								<li>
 									<label>法宝：</label>
-                  <el-select v-model="data.fb.fbxx" placeholder="请选择">
+                  <el-select v-model="data.fb.fbxx" placeholder="请选择" class="inputw">
                     <el-option
                       v-for="item in jsjg.data.options"
                       :key="item.value"
@@ -653,58 +703,26 @@ watch(
                     </el-option>
                   </el-select>
                 </li>
-							</ul>
-						</div>
-						<div class="calculator">
-							<h4>装备属性</h4>
-							<ul>
-								<li>
-									<label>武器伤</label>
-                  <el-input class="inputw" v-model="data.zbsx.wqsh" placeholder="请输入等级："></el-input>
+                <li>
+									<label>仙魔：</label>
+                  <el-select v-model="data.fb.fsStatus" placeholder="请选择" class="inputw">
+                    <el-option
+                      v-for="item in jsjg.data.optionsxm"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    >
+                    </el-option>
+                  </el-select>
                 </li>
-                <li>
-									<label>改造伤害</label>
-                  <el-input class="inputw" v-model="data.zbsx.wqfs" placeholder="请输入等级："></el-input>
-                </li>                
-                
-								<li>
-									<label>头防御</label>     
-                  <el-input class="inputw" v-model="data.zbsx.tgfy" placeholder="请输入等级："></el-input>
-								</li>
-								<li>
-									<label>头气血</label>
-                  <el-input class="inputw" v-model="data.zbsx.tgqx" placeholder="请输入等级："></el-input>
-								</li>
-								<li>
-									<label>头法力</label>
-                  <el-input class="inputw" v-model="data.zbsx.tgfl" placeholder="请输入等级："></el-input>
-								</li>
-								<li>
-									<label>衣防御</label>
-                  <el-input class="inputw" v-model="data.zbsx.yffy" placeholder="请输入等级："></el-input>
-								</li>
-                <li>
-									<label>衣气血</label>
-                  <el-input class="inputw" v-model="data.zbsx.yfqx" placeholder="请输入等级："></el-input>
-								</li>
-                <li>
-									<label>衣法力</label>
-                  <el-input class="inputw" v-model="data.zbsx.yffl" placeholder="请输入等级："></el-input>
-								</li>
-                <li>
-									<label>鞋速度</label>
-                  <el-input class="inputw" v-model="data.zbsx.xzsd" placeholder="请输入等级："></el-input>
-								</li>
-                <li>
-									<label>鞋防御</label>
-                  <el-input class="inputw" v-model="data.zbsx.xzfy" placeholder="请输入等级："></el-input>
-								</li>
 							</ul>
 						</div>
-					
 						<div class="calculator">
 							<h4>套装暗属性</h4>
-              <el-select v-model="data.atz.tzxx" placeholder="请选择">
+                <ul>
+                  <li>
+									<label>套装相性：</label>
+                  <el-select v-model="data.atz.tzxx" placeholder="请选择" class="inputw">
                     <el-option
                       v-for="item in jsjg.data.options"
                       :key="item.value"
@@ -713,95 +731,143 @@ watch(
                     >
                     </el-option>
                   </el-select>
+								</li>
+							</ul>
                 <ul v-if="data.atz.tzxx == 1">
 								<li>
 									<label>法伤1：</label>
-									<el-input class="inputw" v-model="data.atz.jt.fs1" placeholder="请输入等级："></el-input>
+									<el-input type="number" class="inputw" v-model="data.atz.jt.fs1" ></el-input>
                 </li>
 								<li>
 									<label>法伤2：</label>
-                  <el-input class="inputw" v-model="data.atz.jt.fs2" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.jt.fs2" ></el-input>
                 </li>
 								<li>
 									<label>法伤3：</label>
-                  <el-input class="inputw" v-model="data.atz.jt.fs3" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.jt.fs3" ></el-input>
                 </li>
 								<li>
 									<label>法伤4：</label>
-                  <el-input class="inputw" v-model="data.atz.jt.fs4" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.jt.fs4" ></el-input>
                 </li>
 							</ul>
               <ul v-if="data.atz.tzxx == 2">
 								<li>
 									<label>气血1：</label>
-									<el-input class="inputw" v-model="data.atz.mt.qx1" placeholder="请输入等级："></el-input>
+									<el-input type="number" class="inputw" v-model="data.atz.mt.qx1" ></el-input>
                 </li>
 								<li>
 									<label>气血2：</label>
-                  <el-input class="inputw" v-model="data.atz.mt.qx2" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.mt.qx2" ></el-input>
                 </li>
 								<li>
 									<label>气血3：</label>
-                  <el-input class="inputw" v-model="data.atz.mt.qx3" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.mt.qx3" ></el-input>
                 </li>
 								<li>
 									<label>气血4：</label>
-                  <el-input class="inputw" v-model="data.atz.mt.qx4" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.mt.qx4" ></el-input>
                 </li>
 							</ul>
               <ul v-if="data.atz.tzxx == 3">
 								<li>
 									<label>防御1：</label>
-									<el-input class="inputw" v-model="data.atz.st.fy1" placeholder="请输入等级："></el-input>
+									<el-input type="number" class="inputw" v-model="data.atz.st.fy1" ></el-input>
                 </li>
 								<li>
 									<label>防御2：</label>
-                  <el-input class="inputw" v-model="data.atz.st.fy2" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.st.fy2" ></el-input>
                 </li>
 								<li>
 									<label>防御3：</label>
-                  <el-input class="inputw" v-model="data.atz.st.fy3" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.st.fy3" ></el-input>
                 </li>
 								<li>
 									<label>防御4：</label>
-                  <el-input class="inputw" v-model="data.atz.st.fy4" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.st.fy4" ></el-input>
                 </li>
 							</ul>
               <ul v-if="data.atz.tzxx == 4">
 								<li>
 									<label>速度1：</label>
-									<el-input class="inputw" v-model="data.atz.ht.sd1" placeholder="请输入等级："></el-input>
+									<el-input type="number" class="inputw" v-model="data.atz.ht.sd1" ></el-input>
                 </li>
 								<li>
 									<label>速度2：</label>
-                  <el-input class="inputw" v-model="data.atz.ht.sd2" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.ht.sd2" ></el-input>
                 </li>
 								<li>
 									<label>速度3：</label>
-                  <el-input class="inputw" v-model="data.atz.ht.sd3" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.ht.sd3" ></el-input>
                 </li>
 								<li>
 									<label>速度4：</label>
-                  <el-input class="inputw" v-model="data.atz.ht.sd4" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.ht.sd4" ></el-input>
                 </li>
 							</ul>
 							<ul v-if="data.atz.tzxx == 5">
 								<li>
 									<label>物伤1：</label>
-									<el-input class="inputw" v-model="data.atz.tt.ws1" placeholder="请输入等级："></el-input>
+									<el-input type="number" class="inputw" v-model="data.atz.tt.ws1" ></el-input>
                 </li>
 								<li>
 									<label>物伤2：</label>
-                  <el-input class="inputw" v-model="data.atz.tt.ws2" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.tt.ws2" ></el-input>
                 </li>
 								<li>
 									<label>物伤3：</label>
-                  <el-input class="inputw" v-model="data.atz.tt.ws3" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.tt.ws3" ></el-input>
                 </li>
 								<li>
 									<label>物伤4：</label>
-                  <el-input class="inputw" v-model="data.atz.tt.ws4" placeholder="请输入等级："></el-input>
+                  <el-input type="number" class="inputw" v-model="data.atz.tt.ws4" ></el-input>
                 </li>
+							</ul>
+						</div>            
+						<div class="calculator">
+							<h4>装备属性</h4>
+							<ul style="padding-bottom: 10px;">
+								<li>
+									<label>武器伤害：</label>
+                  <el-input type="number" class="inputw" v-model="data.zbsx.wqsh" ></el-input>
+                </li>
+                <li>
+									<label>改造伤害：</label>
+                  <el-input type="number" class="inputw" v-model="data.zbsx.wqfs" ></el-input>
+                </li>                
+                
+								<li>
+									<label>头冠防御：</label>     
+                  <el-input type="number" class="inputw" v-model="data.zbsx.tgfy" ></el-input>
+								</li>
+								<li>
+									<label>头冠气血：</label>
+                  <el-input type="number" class="inputw" v-model="data.zbsx.tgqx" ></el-input>
+								</li>
+								<li>
+									<label>头冠法力：</label>
+                  <el-input type="number" class="inputw" v-model="data.zbsx.tgfl" ></el-input>
+								</li>
+								<li>
+									<label>衣服防御：</label>
+                  <el-input type="number" class="inputw" v-model="data.zbsx.yffy" ></el-input>
+								</li>
+                <li>
+									<label>衣服气血：</label>
+                  <el-input type="number" class="inputw" v-model="data.zbsx.yfqx" ></el-input>
+								</li>
+                <li>
+									<label>衣服法力：</label>
+                  <el-input type="number" class="inputw" v-model="data.zbsx.yffl" ></el-input>
+								</li>
+                <li>
+									<label>鞋子速度：</label>
+                  <el-input type="number" class="inputw" v-model="data.zbsx.xzsd" ></el-input>
+								</li>
+                <li>
+									<label>鞋子防御：</label>
+                  <el-input type="number" class="inputw" v-model="data.zbsx.xzfy" ></el-input>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -838,6 +904,31 @@ watch(
 					</div>
 				</div>
 			</div>
+      <el-dialog v-model="dialogFormVisible" title="帮助说明">
+        <div>
+          <div><el-text class="mx-1" size="large">1.各属性加点值为人物属性面板上显示数值</el-text></div>
+          <div><el-text class="mx-1" type="primary" size="large">2.各相性加点值为人物属性面板上显示数值</el-text></div>
+          <div><el-text class="mx-1" type="success" size="large">3.更换装备、首饰、魂器各属性点会变化，需要重新对一下各属性点各相性点</el-text></div>
+          <div><el-text class="mx-1" type="info" size="large">4.改造过的装备，需要填写改造伤害值，否则法伤数据不准</el-text></div>
+          <div><el-text class="mx-1" type="warning" size="large">5.数据目前法伤、物伤、速度计算比较准确，其他三项仅供参考</el-text></div>
+          <div><el-text class="mx-1" type="danger" size="large">6.共鸣属性是加的敏捷/力量等属性会在面板上显示</el-text></div>
+          <div>
+            <el-image
+              style="width: 100px; height: 100px"
+              :src="url"
+              :zoom-rate="1.2"
+              :preview-src-list="srcList"
+              :initial-index="1"
+              fit="cover"
+            />
+          </div>
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">关闭</el-button>
+          </span>
+        </template>
+      </el-dialog>
 		</div>
 </template>
 <style scoped>
@@ -850,7 +941,7 @@ watch(
 .mnq-con h3 { height: 70px; text-align: center; font: 400 30px/70px 'Microsoft Yahei'; color: #1a7db0; }
 .mnq-box { width: 944px; padding: 10px; margin: 20px auto;     background-color: #dabc7c; border: 1px solid #d0ad69; overflow: hidden; }
 .mnq-con .erro { background-color: #faffc6; text-align: center; color: red; font-size: 14px; border: 1px solid #d0ad69; }
-.mnq-t { height: 30px; padding: 10px 0; background-color: #fcfcfc; border: 1px solid #d0ad69; }
+.mnq-t { display:flex;align-items: center; height: 30px; padding: 10px 0; background-color: #fcfcfc; border: 1px solid #d0ad69; }
 .mnq-t label { float: left; width: 80px; margin-top: 2px; text-align: right; font: 400 16px/26px 'Microsoft Yahei'; color: #506b8a; }
 .mnq-t input { float: left; width: 154px; margin-top: 2px; height: 24px; padding: 0 10px; border: 1px solid #c4c4c4; font: 400 14px/24px 'Microsoft Yahei'; color: #506b8a; }
 .mnq-t select { float: left; height: 26px; width: 80px; text-align: center; margin: 2px 10px; border: 1px solid #c4c4c4;}
@@ -892,5 +983,21 @@ ul,p{
 .flexBox{
   display: flex;
   flex-wrap: wrap;
+}
+label{
+  width: 90px;
+  text-align: right;
+  padding: 0!important;
+}
+li{
+  display: flex;
+  justify-content: center;
+}
+.el-input{
+  height: 32px;
+}
+.cur{
+  cursor: pointer;
+  padding-left: 20px;
 }
 </style>
